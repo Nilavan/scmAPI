@@ -1,0 +1,28 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
+<body>
+  <main class="main">
+    <!-- Landing -->
+    <section class="landing">
+      <div class="landing-text">
+        <h1>Better Supply Chain</h1>
+        <p>
+          APIs to build a transparent and sustainable supply chain for your
+          company.
+        </p>
+        {% if user.is_authenticated %}
+        <a href="/apidoc.html" class="btn btn-lg">Get Started</a>
+        {% else %}
+        <a href="/pricing.html" class="btn btn-lg">Get Started</a>
+        {% endif %}
+      </div>
+      <div class="landing-image">
+        <img
+          src="https://raw.githubusercontent.com/MohamedAridah/frontendmentor_url-shortening-api/main/images/illustration-working.svg"
+          alt="Working Illustration"
+        />
+      </div>
+    </section>
+  </main>
+</body>
+{% endblock %}

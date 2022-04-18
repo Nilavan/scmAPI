@@ -1,0 +1,97 @@
+{% extends "base.html" %} {% block title %}Pricing{% endblock %} {% block content
+    %}
+<div align="center">
+  <a class="enableEthereumButton btn btn-sm bg-blue-500"> Enable Ethereum </a>
+</div>
+<br />
+<br />
+
+<div class="pricing-table">
+  <div class="ptable-item">
+    <div class="ptable-single">
+      <div class="ptable-header">
+        <div class="ptable-title">
+          <h2>Trial</h2>
+        </div>
+        <div class="ptable-price">
+          <h2>Free</h2>
+        </div>
+      </div>
+      <div class="ptable-body">
+        <div class="ptable-description">
+          <ul>
+            <li>10 calls</li>
+            <li>Well-commented Code</li>
+            <li>Easy to Use</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ptable-footer">
+        <div class="ptable-action">
+          <a href="/sign-up" class="enableButton">Enable</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ptable-item">
+    <div class="ptable-single">
+      <div class="ptable-header">
+        <div class="ptable-title">
+          <h2>Silver</h2>
+        </div>
+        <div class="ptable-price">
+          <h2>0.5&ensp;<small>eth</small><span>/ M</span></h2>
+        </div>
+      </div>
+      <div class="ptable-body">
+        <div class="ptable-description">
+          <ul>
+            <li>100 calls</li>
+            <li>Well-commented Code</li>
+            <li>Easy to Use</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ptable-footer">
+        <div class="ptable-action">
+          <a href="" class="sendEthButton1">Buy Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ptable-item featured-item">
+    <div class="ptable-single">
+      <div class="ptable-header">
+        <div class="ptable-status">
+          <span>Hot</span>
+        </div>
+        <div class="ptable-title">
+          <h2>Gold</h2>
+        </div>
+        <div class="ptable-price">
+          <h2>1&ensp;<small>eth</small><span>/ M</span></h2>
+        </div>
+      </div>
+      <div class="ptable-body">
+        <div class="ptable-description">
+          <ul>
+            <li>1000 calls</li>
+            <li>Well-commented Code</li>
+            <li>Easy to Use</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ptable-footer">
+        <div class="ptable-action">
+          <a href="" class="sendEthButton2">Buy Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+<script src="../static/buy.js"></script>
+{% endblock %}
