@@ -1,46 +1,654 @@
-const loginButton = document.getElementById("loginButton")
+window.userAddress = null;
+window.onload = async () => {
+  // Init Web3 connected to ETH network
+  if (window.ethereum) {
+    window.web3 = new Web3(window.ethereum);
+  } else {
+    alert("No ETH brower extension detected.");
+  }
 
-function toggleButton() {
-if (!window.ethereum) {
-    loginButton.innerText = "MetaMask is not installed"
-    loginButton.classList.remove("bg-purple-500", "text-white")
-    loginButton.classList.add(
-    "bg-gray-500",
-    "text-gray-100",
-    "cursor-not-allowed"
-    );
-    return false
+  // Load in Localstore key
+  window.userAddress = window.localStorage.getItem("userAddress");
+  showAddress();
+};
+
+// Use this function to turn a 42 character ETH address
+// into an address like 0x345...12345
+function truncateAddress(address) {
+  if (!address) {
+    return "";
+  }
+  return `${address.substr(0, 5)}...${address.substr(
+    address.length - 5,
+    address.length
+  )}`;
+}
+ 
+// Display or remove the users know address on the frontend
+function showAddress() {
+  if (!window.userAddress) {
+    document.getElementById("userAddress").innerText = "";
+    //document.getElementById("logoutButton").classList.add("hidden");
+    return false;
+  }
+
+  document.getElementById(
+    "userAddress"
+  ).innerText = `ETH Address: ${truncateAddress(window.userAddress)}`;
+  document.getElementById("logoutButton").classList.remove("hidden");
 }
 
-loginButton.addEventListener("click", loginWithMetaMask)
+// remove stored user address and reset frontend
+function logout() {
+  window.userAddress = null;
+  window.localStorage.removeItem("userAddress");
+  showAddress();
 }
 
-async function loginWithMetaMask() {
-const accounts = await window.ethereum
-    .request({ method: "eth_requestAccounts" })
-    .catch((e) => {
-    console.error(e.message);
-    return;
+var Tx = require('ethereumjs-tx').Transaction
+
+async function test(){
+
+  const contractAbi = [
+    {
+        "inputs": [],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "accountsByAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "accountAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "accountId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bool",
+                "name": "isPaymentDone",
+                "type": "bool"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amountPaid",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "planExpiresAt",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [],
+        "name": "company",
+        "outputs": [
+            {
+                "internalType": "address payable",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "isAccountPresent",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "ownersById",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "ownerId",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "suppliersById",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "supplierId",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_accountAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "_name",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_ownerId",
+                "type": "uint256"
+            }
+        ],
+        "name": "addOwner",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_accountAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_ownerId",
+                "type": "uint256"
+            }
+        ],
+        "name": "getNoProduct",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_accountAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_ownerId",
+                "type": "uint256"
+            }
+        ],
+        "name": "getProductGeneralDetails1",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "string",
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "productId",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct SupplyChain.ProductDetails[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_accountAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_ownerId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_productId",
+                "type": "uint256"
+            }
+        ],
+        "name": "getProductStatusDetails",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "productId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "time",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "message",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "publisherId",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct SupplyChain.ProductStatusDeails[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_accountAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_ownerId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "_name",
+                "type": "string"
+            }
+        ],
+        "name": "addProduct",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_accountAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "_name",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_supplierId",
+                "type": "uint256"
+            }
+        ],
+        "name": "addSupplier",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_accountAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_supplierId",
+                "type": "uint256"
+            }
+        ],
+        "name": "getNoProduct2",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_accountAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_supplierId",
+                "type": "uint256"
+            }
+        ],
+        "name": "getProductGeneralDetails2",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "string",
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "productId",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct SupplyChain.ProductDetails[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_accountAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_supplierId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "_message",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_productId",
+                "type": "uint256"
+            }
+        ],
+        "name": "addProductStaus",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_accountAddress",
+                "type": "address"
+            }
+        ],
+        "name": "checkIfAccountPresent",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_accountAddress",
+                "type": "address"
+            }
+        ],
+        "name": "createAccount",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_accountAddress",
+                "type": "address"
+            }
+        ],
+        "name": "checkIfPaymentDone",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_accountAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_amountPaid",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_planExpiresAt",
+                "type": "uint256"
+            }
+        ],
+        "name": "selectPlan",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function",
+        "payable": true
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_accountAddress",
+                "type": "address"
+            }
+        ],
+        "name": "checkIfPlanExpired",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function",
+        "constant": true
+    }
+  ];
+
+  const contractAddress = "0xfb3b6D7B30149cFAE0CdeDF1A5e1D1DE1C3048b0";
+  const companyAddress = "0x55E428bfE81f3bF994CE1E3E5f09df49FA38ECee";
+  const user = window.userAddress;
+
+  const web3 = new Web3("https://rinkeby.infura.io/v3/6d17d1d302fd468a9ccc16233e5ff1b8");
+
+  //web3.eth.defaultAccount = companyAddress;
+  var myContract = new web3.eth.Contract(contractAbi, contractAddress);
+
+  var isPresent = false;
+  isPresent = await myContract.methods.checkIfAccountPresent(user).call({
+      from: companyAddress,
+  });
+  console.log(isPresent);
+  alert(isPresent)
+
+  if (!isPresent) {
+    const privateKey1 = new ethereumjs.Buffer.Buffer('privatekey', 'hex');
+    const query = await myContract.methods.createAccount(user).encodeABI();
+
+    web3.eth.getTransactionCount(companyAddress, (err, txCount) => {
+        // Build the transaction
+        const txObject = {
+            nonce: web3.utils.toHex(txCount),
+            to: contractAddress,
+            value: web3.utils.toHex(web3.utils.toWei('0', 'ether')),
+            gasLimit: web3.utils.toHex(2100000),
+            gasPrice: web3.utils.toHex(web3.utils.toWei('6', 'gwei')),
+            data: query
+        }
+        // Sign the transaction
+        const tx = new ethereumjs.Tx(txObject);
+        tx.sign(privateKey1);
+
+        const serializedTx = tx.serialize();
+        const raw = '0x' + serializedTx.toString('hex');
+        // Broadcast the transaction
+        const transaction = web3.eth.sendSignedTransaction(raw, (err, tx) => {
+            console.log(tx)
+            alert(tx)
+        });
+    })
+  }
+  else {
+    var payDone = false;
+    var planExp = true;
+    payDone = await myContract.methods.checkIfPaymentDone(user).call({
+        from: companyAddress,
     });
-if (!accounts) {
-    return;
+    console.log(payDone);
+    alert(payDone);
+    planExp = await myContract.methods.checkIfPlanExpired(user).call({
+        from: companyAddress,
+    });
+    console.log(planExp);
+    alert(planExp);
+    if (!payDone || planExp) {
+      window.location.href = "/pricing.html";
+    }
+    else {
+      window.location.href = "/apidoc.html";
+    }
+  }
+  //
 }
 
-window.userWalletAddress = accounts[0]
-const account = window.userWalletAddress
-const dict = { account }
-console.log(window.userWalletAddress)
-window.alert(window.userWalletAddress)
-$.ajax({
-    url: "/addr",
-    type: "POST",
-    contentType: "application/json",
-    data: JSON.stringify(account),
-})
-
-loginButton.removeEventListener("click", loginWithMetaMask)
+// Login with Web3 via Metamasks window.ethereum library
+async function loginWithEth() {
+  if (window.web3) {
+      try {
+        // We use this since ethereum.enable() is deprecated. This method is not
+        // available in Web3JS - so we call it directly from metamasks' library
+        const selectedAccount = await window.ethereum
+            .request({
+            method: "eth_requestAccounts",
+            })
+            .then((accounts) => accounts[0])
+            .catch(() => {
+            throw Error("No account selected!");
+            });
+        
+        window.userAddress = selectedAccount;
+        window.localStorage.setItem("userAddress", selectedAccount);
+        const addr = window.userAddress;
+        const dict = { addr: window.userAddress };
+        console.log(JSON.stringify(dict));
+        window.alert(JSON.stringify(dict));
+        $.ajax({
+            url: "/login",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(dict),
+        });
+        showAddress();
+    } catch (error) {
+        console.error(error);
+    }
+  } else {
+      alert("No ETH brower extension detected.");
+  }
 }
-
-window.addEventListener("DOMContentLoaded", () => {
-toggleButton();
-});
