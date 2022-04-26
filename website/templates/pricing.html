@@ -1,11 +1,7 @@
 {% extends "base.html" %} {% block title %}Pricing{% endblock %} {% block content
     %}
-<div align="center">
-  <a class="enableEthereumButton btn btn-sm bg-blue-500"> Enable Ethereum </a>
-</div>
-<br />
-<br />
-
+    <br>
+    <br>
 <div class="pricing-table">
   <div class="ptable-item">
     <div class="ptable-single">
@@ -20,7 +16,7 @@
       <div class="ptable-body">
         <div class="ptable-description">
           <ul>
-            <li>10 calls</li>
+            <li>1 day</li>
             <li>Well-commented Code</li>
             <li>Easy to Use</li>
           </ul>
@@ -47,7 +43,7 @@
       <div class="ptable-body">
         <div class="ptable-description">
           <ul>
-            <li>100 calls</li>
+            <li>30 days</li>
             <li>Well-commented Code</li>
             <li>Easy to Use</li>
           </ul>
@@ -55,7 +51,7 @@
       </div>
       <div class="ptable-footer">
         <div class="ptable-action">
-          <a href="" class="sendEthButton1">Buy Now</a>
+          <button href="" class="sendEthButton1" onclick="sendEth1()">Buy Now</button>
         </div>
       </div>
     </div>
@@ -71,13 +67,13 @@
           <h2>Gold</h2>
         </div>
         <div class="ptable-price">
-          <h2>0.0000002&ensp;<small>eth</small><span>/ M</span></h2>
+          <h2>0.000002&ensp;<small>eth</small><span>/ M</span></h2>
         </div>
       </div>
       <div class="ptable-body">
         <div class="ptable-description">
           <ul>
-            <li>1000 calls</li>
+            <li>60 days</li>
             <li>Well-commented Code</li>
             <li>Easy to Use</li>
           </ul>
@@ -85,7 +81,7 @@
       </div>
       <div class="ptable-footer">
         <div class="ptable-action">
-          <a href="" class="sendEthButton2">Buy Now</a>
+          <button href="" class="sendEthButton2" onclick="sendEth2()">Buy Now</button>
         </div>
       </div>
     </div>
@@ -93,5 +89,4 @@
 </div>
 </div>
 </div>
-<script src="../static/buy.js"></script>
 {% endblock %}

@@ -39,18 +39,57 @@ block content %}
       <div class="content-menu">
         <div class="content-infos">
           <div class="info"><b>Version:</b> 1.0.0</div>
-          <div class="info"><b>Last Updated:</b> 15th Apr, 2022</div>
+          <div class="info"><b>Last Updated:</b> 26th Apr, 2022</div>
         </div>
         <ul>
           <li class="scroll-to-link active" data-target="content-get-started">
-            <a>GET STARTED</a>
+            <a>Get started</a>
           </li>
-          <li class="scroll-to-link" data-target="content-get-characters">
-            <a>Get Characters</a>
+          <li class="scroll-to-link" data-target="content-add-owner">
+            <a>Add Owner</a>
           </li>
-          <li class="scroll-to-link" data-target="content-errors">
+          <li class="scroll-to-link" data-target="content-get-no-product-owner">
+            <a>Get no. of products for owner</a>
+          </li>
+          <li
+            class="scroll-to-link"
+            data-target="content-get-product-general-details-owner"
+          >
+            <a>Get product general details for owner</a>
+          </li>
+          <li
+            class="scroll-to-link"
+            data-target="content-get-product-status-details-owner"
+          >
+            <a>Get product status details for owner</a>
+          </li>
+          <li class="scroll-to-link" data-target="content-add-product-owner">
+            <a>Add product owner</a>
+          </li>
+          <li class="scroll-to-link" data-target="content-add-supplier">
+            <a>Add Supplier</a>
+          </li>
+          <li
+            class="scroll-to-link"
+            data-target="content-get-no-product-supplier"
+          >
+            <a>Get no. of products for supplier</a>
+          </li>
+          <li
+            class="scroll-to-link"
+            data-target="content-get-product-general-details-supplier"
+          >
+            <a>Get product general details for supplier</a>
+          </li>
+          <li
+            class="scroll-to-link"
+            data-target="content-add-product-status-supplier"
+          >
+            <a>Add product status supplier</a>
+          </li>
+          <!--<li class="scroll-to-link" data-target="content-errors">
             <a>Errors</a>
-          </li>
+          </li>-->
         </ul>
       </div>
     </div>
@@ -64,95 +103,32 @@ block content %}
                 </pre
           >
           <p>
-            The API provides programmatic access to... Lorem ipsum dolor sit
-            amet consectetur adipisicing elit. Ea consectetur architecto
-            voluptates, iure distinctio perferendis, debitis laboriosam ipsam
-            autem aliquam fuga eligendi accusantium dolor temporibus eum velit
-            voluptatem, quae facere.
+            The API provides functions for two main parties in the supply chain
+            - The owner and the Supplier.<br /><br />Functions for owners
+            are:<br /><br />
+            - <code class="higlighted">add owner</code><br />
+            - <code class="higlighted">get number of products</code><br />
+            - <code class="higlighted">get product details</code><br />
+            - <code class="higlighted">get product status</code><br />
+            - <code class="higlighted">add product owner</code>
+            <br /><br />Functions for suppliers are:<br />
+            - <code class="higlighted">add supplier</code><br />
+            - <code class="higlighted">get number of products</code><br />
+            - <code class="higlighted">get product details</code><br />
+            - <code class="higlighted">get product status</code>
           </p>
         </div>
-        <div
-          class="overflow-hidden content-section"
-          id="content-get-characters"
-        >
-          <h2>get characters</h2>
-          <pre><code class="bash">
-# Here is a curl example
-curl \
--X POST http://api.westeros.com/character/get \
--F 'secret_key=your_api_key' \
--F 'house=Stark,Bolton' \
--F 'offset=0' \
--F 'limit=50'
+        <div class="overflow-hidden content-section" id="content-add-owner">
+          <h2>Add owner</h2>
+          <pre><code class="javascript">
+// Here is a javascript example
+const address = req.query.accountaddress;
+const ownerName = req.query.name;
+const ownerId = req.query.ownerId;
+const query = await myContract.methods.addOwner(address, ownerName, ownerId).encodeABI();
                 </code></pre>
-          <p>To get characters you need to make a POST call</p>
+          <p>To add the owner into the supply chain</p>
           <br />
-          <pre><code class="json">
-Result example :
-
-{
-  query:{
-    offset: 0,
-    limit: 50,
-    house: [
-      "Stark",
-      "Bolton"
-    ],
-  }
-  result: [
-    {
-      id: 1,
-      first_name: "Jon",
-      last_name: "Snow",
-      alive: true,
-      house: "Stark",
-      gender: "m",
-      age: 14,
-      location: "Winterfell"
-    },
-    {
-      id: 2,
-      first_name: "Eddard",
-      last_name: "Stark",
-      alive: false,
-      house: "Stark",
-      gender: "m",
-      age: 35,
-      location: 'Winterfell'
-    },
-    {
-      id: 3,
-      first_name: "Catelyn",
-      last_name: "Stark",
-      alive: false,
-      house: "Stark",
-      gender: "f",
-      age: 33,
-      location: "Winterfell"
-    },
-    {
-      id: 4,
-      first_name: "Roose",
-      last_name: "Bolton",
-      alive: false,
-      house: "Bolton",
-      gender: "m",
-      age: 40,
-      location: "Dreadfort"
-    },
-    {
-      id: 5,
-      first_name: "Ramsay",
-      last_name: "Snow",
-      alive: false,
-      house: "Bolton",
-      gender: "m",
-      age: 15,
-      location: "Dreadfort"
-    },
-  ]
-}
-                </code></pre>
           <h4>QUERY PARAMETERS</h4>
           <table class="central-overflow-x">
             <thead>
@@ -164,54 +140,373 @@ Result example :
             </thead>
             <tbody>
               <tr>
-                <td>secret_key</td>
+                <td>address</td>
                 <td>String</td>
-                <td>Your API key.</td>
+                <td>Metamask address</td>
               </tr>
               <tr>
-                <td>search</td>
+                <td>ownerName</td>
                 <td>String</td>
-                <td>(optional) A search word to find character by name.</td>
+                <td>Owner name</td>
               </tr>
               <tr>
-                <td>house</td>
+                <td>ownerId</td>
                 <td>String</td>
-                <td>(optional) a string array of houses:</td>
-              </tr>
-              <tr>
-                <td>alive</td>
-                <td>Boolean</td>
-                <td>(optional) a boolean to filter alived characters</td>
-              </tr>
-              <tr>
-                <td>gender</td>
-                <td>String</td>
-                <td>
-                  (optional) a string to filter character by gender:<br />
-                  m: male<br />
-                  f: female
-                </td>
-              </tr>
-              <tr>
-                <td>offset</td>
-                <td>Integer</td>
-                <td>
-                  (optional - default: 0) A cursor for use in pagination.
-                  Pagination starts offset the specified offset.
-                </td>
-              </tr>
-              <tr>
-                <td>limit</td>
-                <td>Integer</td>
-                <td>
-                  (optional - default: 10) A limit on the number of objects to
-                  be returned, between 1 and 100.
-                </td>
+                <td>Owner ID</td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div class="overflow-hidden content-section" id="content-errors">
+        <div
+          class="overflow-hidden content-section"
+          id="content-get-no-product-owner"
+        >
+          <h2>Get no. of products for owner</h2>
+          <pre><code class="javascript">
+// Here is a javascript example
+const address = req.query.accountaddress;
+const ownerId = req.query.ownerId;
+var value = await myContract.methods.getNoProductOwner(address, ownerId).call({
+    from: companyAddress,
+});
+                </code></pre>
+          <p>To get the number of products for owner</p>
+          <br />
+          <pre><code class="javascript">
+// Result:
+Number of products for owner: Integer
+                            </code></pre>
+          <h4>QUERY PARAMETERS</h4>
+          <table class="central-overflow-x">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>address</td>
+                <td>String</td>
+                <td>Metamask address</td>
+              </tr>
+              <tr>
+                <td>ownerId</td>
+                <td>String</td>
+                <td>Owner ID</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div
+          class="overflow-hidden content-section"
+          id="content-get-product-general-details-owner"
+        >
+          <h2>Get product general details for owner</h2>
+          <pre><code class="javascript">
+// Here is a javascript example
+const address = req.query.accountaddress;
+const ownerId = req.query.ownerId;
+var value = await myContract.methods.getProductGeneralDetailsOwner(address, ownerId).call({
+    from: companyAddress,
+});
+                </code></pre>
+          <p>To get the product details for owner</p>
+          <br />
+          <pre><code class="javascript">
+// Result:
+Product details for owner
+                            </code></pre>
+          <h4>QUERY PARAMETERS</h4>
+          <table class="central-overflow-x">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>address</td>
+                <td>String</td>
+                <td>Metamask address</td>
+              </tr>
+              <tr>
+                <td>ownerId</td>
+                <td>String</td>
+                <td>Owner ID</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div
+          class="overflow-hidden content-section"
+          id="content-get-product-status-details-owner"
+        >
+          <h2>Get product status details for owner</h2>
+          <pre><code class="javascript">
+// Here is a javascript example
+const address = req.query.accountaddress;
+const ownerId = req.query.ownerId;
+const productId = req.query.productId;
+var value = await myContract.methods.getProductStatusDetailsOwner(address, ownerId, productId).call({
+    from: companyAddress,
+});
+                </code></pre>
+          <p>To get the product status details for owner</p>
+          <br />
+          <pre><code class="javascript">
+// Result:
+Product status details for owner
+                            </code></pre>
+          <h4>QUERY PARAMETERS</h4>
+          <table class="central-overflow-x">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>address</td>
+                <td>String</td>
+                <td>Metamask address</td>
+              </tr>
+              <tr>
+                <td>ownerId</td>
+                <td>String</td>
+                <td>Owner ID</td>
+              </tr>
+              <tr>
+                <td>productId</td>
+                <td>String</td>
+                <td>Product ID</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div
+          class="overflow-hidden content-section"
+          id="content-add-product-owner"
+        >
+          <h2>Function to add a product</h2>
+          <pre><code class="javascript">
+// Here is a javascript example
+const address = req.query.accountaddress;
+const ownerId = req.query.ownerId;
+const productName = req.query.name;
+const query = await myContract.methods.addProductOwner(address, ownerId, productName).encodeABI();
+                </code></pre>
+          <p>Owner can add a product</p>
+          <br />
+          <h4>QUERY PARAMETERS</h4>
+          <table class="central-overflow-x">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>address</td>
+                <td>String</td>
+                <td>Metamask address</td>
+              </tr>
+              <tr>
+                <td>ownerId</td>
+                <td>String</td>
+                <td>Owner ID</td>
+              </tr>
+              <tr>
+                <td>productName</td>
+                <td>String</td>
+                <td>Product name</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="overflow-hidden content-section" id="content-add-supplier">
+          <h2>Add supplier</h2>
+          <pre><code class="javascript">
+// Here is a javascript example
+const address = req.query.accountaddress;
+const supplierName = req.query.name;
+const supplierId = req.query.supplierId;
+const query = await myContract.methods.addSupplier(address, supplierName, supplierId).encodeABI();
+                </code></pre>
+          <p>To add the supplier into the supply chain</p>
+          <br />
+          <h4>QUERY PARAMETERS</h4>
+          <table class="central-overflow-x">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>address</td>
+                <td>String</td>
+                <td>Metamask address</td>
+              </tr>
+              <tr>
+                <td>supplierName</td>
+                <td>String</td>
+                <td>Supplier name</td>
+              </tr>
+              <tr>
+                <td>supplierId</td>
+                <td>String</td>
+                <td>Supplier ID</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div
+          class="overflow-hidden content-section"
+          id="content-get-no-product-supplier"
+        >
+          <h2>Get no. of products for supplier</h2>
+          <pre><code class="javascript">
+// Here is a javascript example
+const address = req.query.accountaddress;
+const supplierId = req.query.supplierId;
+var value = await myContract.methods.getNoProductSupplier(address, supplierId).call({
+    from: companyAddress,
+});
+                </code></pre>
+          <p>To get the number of products for supplier</p>
+          <br />
+          <pre><code class="javascript">
+// Result:
+Number of products for supplier: Integer
+                            </code></pre>
+          <h4>QUERY PARAMETERS</h4>
+          <table class="central-overflow-x">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>address</td>
+                <td>String</td>
+                <td>Metamask address</td>
+              </tr>
+              <tr>
+                <td>supplierId</td>
+                <td>String</td>
+                <td>Supplier ID</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div
+          class="overflow-hidden content-section"
+          id="content-get-product-general-details-supplier"
+        >
+          <h2>Get product general details for supplier</h2>
+          <pre><code class="javascript">
+// Here is a javascript example
+const address = req.query.accountaddress;
+const supplierId = req.query.supplierId;
+var value = await myContract.methods.getProductGeneralDetailsSupplier(address, supplierId).call({
+    from: companyAddress,
+});
+                </code></pre>
+          <p>To get the product details for supplier</p>
+          <br />
+          <pre><code class="javascript">
+// Result:
+Product details for supplier
+                            </code></pre>
+          <h4>QUERY PARAMETERS</h4>
+          <table class="central-overflow-x">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>address</td>
+                <td>String</td>
+                <td>Metamask address</td>
+              </tr>
+              <tr>
+                <td>supplierId</td>
+                <td>String</td>
+                <td>Supplier ID</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div
+          class="overflow-hidden content-section"
+          id="content-add-product-status-supplier"
+        >
+          <h2>Supplier can product status</h2>
+          <pre><code class="javascript">
+// Here is a javascript example
+const address = req.query.accountaddress;
+const supplierId = req.query.supplierId;
+const message = req.query.message;
+const productId = req.query.productId;
+const query = await myContract.methods.addProductStausSupplier(address, supplierId, message, productId).encodeABI();
+                </code></pre>
+          <p>To get the product status details for owner</p>
+          <br />
+          <pre><code class="javascript">
+// Result:
+Product status details for owner
+                            </code></pre>
+          <h4>QUERY PARAMETERS</h4>
+          <table class="central-overflow-x">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>address</td>
+                <td>String</td>
+                <td>Metamask address</td>
+              </tr>
+              <tr>
+                <td>supplierId</td>
+                <td>String</td>
+                <td>Supplier ID</td>
+              </tr>
+              <tr>
+                <td>message</td>
+                <td>String</td>
+                <td>Message from supplier</td>
+              </tr>
+              <tr>
+                <td>productId</td>
+                <td>String</td>
+                <td>Product ID</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!--<div class="overflow-hidden content-section" id="content-errors">
           <h2>Errors</h2>
           <p>The API uses the following error codes:</p>
           <table>
@@ -257,7 +552,7 @@ Result example :
               </tr>
             </tbody>
           </table>
-        </div>
+        </div>-->
       </div>
       <div class="content-code"></div>
     </div>

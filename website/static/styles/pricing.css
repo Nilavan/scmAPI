@@ -215,7 +215,7 @@ h1.demo-title a {
   padding-bottom: 30px;
 }
 
-.pricing-table .ptable-action a {
+.pricing-table .ptable-action button {
   display: inline-block;
   padding: 10px 20px;
   color: #ff6f61;
@@ -226,17 +226,17 @@ h1.demo-title a {
   background: #2a293e;
 }
 
-.pricing-table .ptable-action a:hover {
+.pricing-table .ptable-action button:hover {
   color: #2a293e;
   background: #ff6f61;
 }
 
-.pricing-table .ptable-item.featured-item .ptable-action a {
+.pricing-table .ptable-item.featured-item .ptable-action button {
   color: #2a293e;
   background: #ff6f61;
 }
 
-.pricing-table .ptable-item.featured-item .ptable-action a:hover {
+.pricing-table .ptable-item.featured-item .ptable-action button:hover {
   color: #ff6f61;
   background: #2a293e;
 }

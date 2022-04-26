@@ -1,55 +1,4 @@
-window.userAddress = null;
-window.onload = async () => {
-  // Init Web3 connected to ETH network
-  if (window.ethereum) {
-    window.web3 = new Web3(window.ethereum);
-  } else {
-    alert("No ETH brower extension detected.");
-  }
-
-  // Load in Localstore key
-  window.userAddress = window.localStorage.getItem("userAddress");
-  showAddress();
-};
-
-// Use this function to turn a 42 character ETH address
-// into an address like 0x345...12345
-function truncateAddress(address) {
-  if (!address) {
-    return "";
-  }
-  return `${address.substr(0, 5)}...${address.substr(
-    address.length - 5,
-    address.length
-  )}`;
-}
- 
-// Display or remove the users know address on the frontend
-function showAddress() {
-  if (!window.userAddress) {
-    document.getElementById("userAddress").innerText = "";
-    //document.getElementById("logoutButton").classList.add("hidden");
-    return false;
-  }
-
-  document.getElementById(
-    "userAddress"
-  ).innerText = `ETH Address: ${truncateAddress(window.userAddress)}`;
-  document.getElementById("logoutButton").classList.remove("hidden");
-}
-
-// remove stored user address and reset frontend
-function logout() {
-  window.userAddress = null;
-  window.localStorage.removeItem("userAddress");
-  showAddress();
-}
-
-var Tx = require('ethereumjs-tx').Transaction
-
-async function test(){
-
-  const contractAbi = [
+const contractAbi = [
     {
         "inputs": [],
         "stateMutability": "nonpayable",
@@ -551,104 +500,250 @@ async function test(){
     }
   ];
 
-  const contractAddress = "0xfb3b6D7B30149cFAE0CdeDF1A5e1D1DE1C3048b0";
-  const companyAddress = "0x55E428bfE81f3bF994CE1E3E5f09df49FA38ECee";
-  const user = window.userAddress;
+window.userAddress = null;
+window.onload = async () => {
+    // Init Web3 connected to ETH network
+    if (window.ethereum) {
+        window.web3 = new Web3(window.ethereum);
+    } else {
+        alert("No ETH brower extension detected.");
+    }
 
-  const web3 = new Web3("https://rinkeby.infura.io/v3/6d17d1d302fd468a9ccc16233e5ff1b8");
+    // Load in Localstore key
+    window.userAddress = window.localStorage.getItem("userAddress");
+    showAddress();
+};
 
-  //web3.eth.defaultAccount = companyAddress;
-  var myContract = new web3.eth.Contract(contractAbi, contractAddress);
+// Use this function to turn a 42 character ETH address
+// into an address like 0x345...12345
+function truncateAddress(address) {
+    if (!address) {
+        return "";
+    }
+    return `${address.substr(0, 5)}...${address.substr(
+        address.length - 5,
+        address.length
+    )}`;
+}
+ 
+// Display or remove the users know address on the frontend
+function showAddress() {
+    if (!window.userAddress) {
+        document.getElementById("userAddress").innerText = "";
+        //document.getElementById("logoutButton").classList.add("hidden");
+        return false;
+    }
 
-  var isPresent = false;
-  isPresent = await myContract.methods.checkIfAccountPresent(user).call({
-      from: companyAddress,
-  });
-  console.log(isPresent);
-  alert(isPresent)
+    document.getElementById(
+        "userAddress"
+    ).innerText = `ETH Address: ${truncateAddress(window.userAddress)}`;
+    document.getElementById("logoutButton").classList.remove("hidden");
+}
 
-  if (!isPresent) {
-    const privateKey1 = new ethereumjs.Buffer.Buffer('privatekey', 'hex');
-    const query = await myContract.methods.createAccount(user).encodeABI();
+// remove stored user address and reset frontend
+function logout() {
+    window.userAddress = null;
+    window.localStorage.removeItem("userAddress");
+    showAddress();
+}
 
+var Tx = require('ethereumjs-tx').Transaction
+
+async function test(){
+    const contractAddress = "0x860Ce059120F2AecfE69331067Fe231c3DDd32EB";
+    const companyAddress = "0x55E428bfE81f3bF994CE1E3E5f09df49FA38ECee";
+    const user = window.userAddress;
+
+    const web3 = new Web3("https://rinkeby.infura.io/v3/6d17d1d302fd468a9ccc16233e5ff1b8");
+
+    web3.eth.defaultAccount = companyAddress;
+    var myContract = new web3.eth.Contract(contractAbi, contractAddress);
+
+    var isPresent = false;
+    isPresent = await myContract.methods.checkIfAccountPresent(companyAddress).call({
+        from: companyAddress,
+    });
+    console.log(isPresent);
+    alert("Account present: "+isPresent)
+
+    if (!isPresent) {
+        const privateKey1 = new ethereumjs.Buffer.Buffer('privateKey', 'hex');
+        const query = await myContract.methods.createAccount(companyAddress).encodeABI();
+
+        web3.eth.getTransactionCount(companyAddress, (err, txCount) => {
+            // Build the transaction
+            const txObject = {
+                nonce: web3.utils.toHex(txCount),
+                to: contractAddress,
+                value: web3.utils.toHex(web3.utils.toWei('0', 'ether')),
+                gasLimit: web3.utils.toHex(2100000),
+                gasPrice: web3.utils.toHex(web3.utils.toWei('6', 'gwei')),
+                data: query
+            }
+            // Sign the transaction
+            const tx = new ethereumjs.Tx(txObject,{chain: 'rinkeby'});
+            tx.sign(privateKey1);
+
+            const serializedTx = tx.serialize();
+            const raw = '0x' + serializedTx.toString('hex');
+            // Broadcast the transaction
+            const transaction = web3.eth.sendSignedTransaction(raw).then(tx => {
+                console.log('Tx:', tx);
+                alert('Transaction complete!')
+            })
+            .catch(e => {
+                console.error('Error broadcasting the transaction: ', e);
+                alert('Error broadcasting the transaction: '+ e)
+            });
+        })
+    }
+    else {
+        var payDone = false;
+        var planExp = true;
+        payDone = await myContract.methods.checkIfPaymentDone(companyAddress).call({
+            from: companyAddress,
+        });
+        console.log(payDone);
+        alert("Payment Done: "+payDone);
+        planExp = await myContract.methods.checkIfPlanExpired(companyAddress).call({
+            from: companyAddress,
+        });
+        console.log(planExp);
+        alert("Plan Expired: "+planExp);
+        if (!payDone || planExp) {
+            window.location.href = "/pricing.html";
+        }
+        else {
+            window.location.href = "/apidoc.html";
+        }
+    }
+  //
+}
+
+// Login with Web3 via Metamasks window.ethereum library
+async function loginWithEth() {
+    if (window.web3) {
+        try {
+            // We use this since ethereum.enable() is deprecated. This method is not
+            // available in Web3JS - so we call it directly from metamasks' library
+            const selectedAccount = await window.ethereum
+                .request({
+                method: "eth_requestAccounts",
+                })
+                .then((accounts) => accounts[0])
+                .catch(() => {
+                throw Error("No account selected!");
+                });
+            
+            window.userAddress = selectedAccount;
+            window.localStorage.setItem("userAddress", selectedAccount);
+            const addr = window.userAddress;
+            const dict = { addr: window.userAddress };
+            console.log(JSON.stringify(dict));
+            window.alert(JSON.stringify(dict));
+            $.ajax({
+                url: "/login",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(dict),
+            });
+            showAddress();
+        } catch (error) {
+            console.error(error);
+        }
+    } else {
+        alert("No ETH brower extension detected.");
+    }
+}
+
+async function sendEth1(){
+    const contractAddress = "0x860Ce059120F2AecfE69331067Fe231c3DDd32EB";
+    const companyAddress = "0x55E428bfE81f3bF994CE1E3E5f09df49FA38ECee";
+    const user = window.userAddress;
+
+    const web3 = new Web3("https://rinkeby.infura.io/v3/6d17d1d302fd468a9ccc16233e5ff1b8");
+
+    var myContract = new web3.eth.Contract(contractAbi, contractAddress);
+    const dt = Math.floor(new Date().getTime()/1000)+2592000;
+    console.log(dt)
+
+    const privateKey = new ethereumjs.Buffer.Buffer('privateKey', 'hex');
+
+    const address = companyAddress;
+    const amount = web3.utils.toHex(web3.utils.toWei('0.000001', 'ether'));
+    const expiresAt = dt;
+    const query = await myContract.methods.selectPlan(address, amount, expiresAt).encodeABI();
     web3.eth.getTransactionCount(companyAddress, (err, txCount) => {
         // Build the transaction
         const txObject = {
             nonce: web3.utils.toHex(txCount),
             to: contractAddress,
-            value: web3.utils.toHex(web3.utils.toWei('0', 'ether')),
+            value: web3.utils.toHex(web3.utils.toWei('0.000001', 'ether')),
             gasLimit: web3.utils.toHex(2100000),
             gasPrice: web3.utils.toHex(web3.utils.toWei('6', 'gwei')),
             data: query
         }
         // Sign the transaction
         const tx = new ethereumjs.Tx(txObject);
-        tx.sign(privateKey1);
+        tx.sign(privateKey);
 
         const serializedTx = tx.serialize();
         const raw = '0x' + serializedTx.toString('hex');
+
         // Broadcast the transaction
-        const transaction = web3.eth.sendSignedTransaction(raw, (err, tx) => {
-            console.log(tx)
-            alert(tx)
+        const transaction = web3.eth.sendSignedTransaction(raw).then(tx => {
+            console.log('Tx:', tx);
+            alert('Transaction complete!')
+        })
+        .catch(e => {
+            console.error('Error broadcasting the transaction: ', e);
+            alert('Error broadcasting the transaction: '+ e)
         });
     })
   }
-  else {
-    var payDone = false;
-    var planExp = true;
-    payDone = await myContract.methods.checkIfPaymentDone(user).call({
-        from: companyAddress,
-    });
-    console.log(payDone);
-    alert(payDone);
-    planExp = await myContract.methods.checkIfPlanExpired(user).call({
-        from: companyAddress,
-    });
-    console.log(planExp);
-    alert(planExp);
-    if (!payDone || planExp) {
-      window.location.href = "/pricing.html";
-    }
-    else {
-      window.location.href = "/apidoc.html";
-    }
-  }
-  //
-}
+  
+  async function sendEth2(){
+    const contractAddress = "0x860Ce059120F2AecfE69331067Fe231c3DDd32EB";
+    const companyAddress = "0x55E428bfE81f3bF994CE1E3E5f09df49FA38ECee";
+    const user = window.userAddress;
 
-// Login with Web3 via Metamasks window.ethereum library
-async function loginWithEth() {
-  if (window.web3) {
-      try {
-        // We use this since ethereum.enable() is deprecated. This method is not
-        // available in Web3JS - so we call it directly from metamasks' library
-        const selectedAccount = await window.ethereum
-            .request({
-            method: "eth_requestAccounts",
-            })
-            .then((accounts) => accounts[0])
-            .catch(() => {
-            throw Error("No account selected!");
-            });
-        
-        window.userAddress = selectedAccount;
-        window.localStorage.setItem("userAddress", selectedAccount);
-        const addr = window.userAddress;
-        const dict = { addr: window.userAddress };
-        console.log(JSON.stringify(dict));
-        window.alert(JSON.stringify(dict));
-        $.ajax({
-            url: "/login",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(dict),
+    const web3 = new Web3("https://rinkeby.infura.io/v3/6d17d1d302fd468a9ccc16233e5ff1b8");
+
+    var myContract = new web3.eth.Contract(contractAbi, contractAddress);
+    const dt = Math.floor(new Date().getTime()/1000)+2*2592000;
+    console.log(dt)
+
+    const privateKey = new ethereumjs.Buffer.Buffer('privateKey', 'hex');
+
+    const address = companyAddress;
+    const amount = web3.utils.toHex(web3.utils.toWei('0.000002', 'ether'));
+    const expiresAt = dt;
+    const query = await myContract.methods.selectPlan(address, amount, expiresAt).encodeABI();
+    web3.eth.getTransactionCount(companyAddress, (err, txCount) => {
+        // Build the transaction
+        const txObject = {
+            nonce: web3.utils.toHex(txCount),
+            to: contractAddress,
+            value: web3.utils.toHex(web3.utils.toWei('0.000002', 'ether')),
+            gasLimit: web3.utils.toHex(2100000),
+            gasPrice: web3.utils.toHex(web3.utils.toWei('6', 'gwei')),
+            data: query
+        }
+        // Sign the transaction
+        const tx = new ethereumjs.Tx(txObject);
+        tx.sign(privateKey);
+
+        const serializedTx = tx.serialize();
+        const raw = '0x' + serializedTx.toString('hex');
+
+        // Broadcast the transaction
+        const transaction = web3.eth.sendSignedTransaction(raw).then(tx => {
+            console.log('Tx:', tx);
+            alert('Transaction complete!')
+        })
+        .catch(e => {
+            console.error('Error broadcasting the transaction: ', e);
+            alert('Error broadcasting the transaction: '+ e)
         });
-        showAddress();
-    } catch (error) {
-        console.error(error);
-    }
-  } else {
-      alert("No ETH brower extension detected.");
+    })
   }
-}
