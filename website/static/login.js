@@ -567,7 +567,7 @@ async function test(){
     alert("Account present: "+isPresent)
     if (!isPresent) {
         alert('Creating account. Please wait. This may take a while.')
-        const privateKey1 = new ethereumjs.Buffer.Buffer('privatkey', 'hex');
+        const privateKey1 = new ethereumjs.Buffer.Buffer('privatekey', 'hex');
         const query = await myContract.methods.createAccount(user).encodeABI();
 
         web3.eth.getTransactionCount(companyAddress, (err, txCount) => {
@@ -577,7 +577,7 @@ async function test(){
                 to: contractAddress,
                 value: web3.utils.toHex(web3.utils.toWei('0', 'ether')),
                 gasLimit: web3.utils.toHex(2100000),
-                gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
+                gasPrice: web3.utils.toHex(web3.utils.toWei('60', 'gwei')),
                 data: query
             }
             // Sign the transaction
@@ -674,7 +674,7 @@ async function sendEth1(){
             from: user,
             to: companyAddress,
             value: "0x" + (0.1 * 10 ** 18).toString(16),
-            gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
+            gasPrice: web3.utils.toHex(web3.utils.toWei('60', 'gwei')),
             gas: "0x2710",
           },
         ],
@@ -682,7 +682,7 @@ async function sendEth1(){
       .then((txHash) => console.log(txHash))
       .catch((error) => console.error);
 
-    const privateKey = new ethereumjs.Buffer.Buffer('privatkey', 'hex');
+    const privateKey = new ethereumjs.Buffer.Buffer('privatekey', 'hex');
 
     const address = companyAddress;
     const amount = 1;
@@ -695,7 +695,7 @@ async function sendEth1(){
             to: contractAddress,
             value: web3.utils.toHex(web3.utils.toWei('0', 'ether')),
             gasLimit: web3.utils.toHex(2100000),
-            gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
+            gasPrice: web3.utils.toHex(web3.utils.toWei('60', 'gwei')),
             data: query
         }
         // Sign the transaction
@@ -735,7 +735,7 @@ async function sendEth1(){
           from: user,
           to: companyAddress,
           value: "0x" + (0.2 * 10 ** 18).toString(16),
-          gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
+          gasPrice: web3.utils.toHex(web3.utils.toWei('60', 'gwei')),
           gas: "0x2710",
         },
       ],
@@ -743,7 +743,7 @@ async function sendEth1(){
     .then((txHash) => console.log(txHash))
     .catch((error) => console.error);
 
-    const privateKey = new ethereumjs.Buffer.Buffer('privatkey', 'hex');
+    const privateKey = new ethereumjs.Buffer.Buffer('privatekey', 'hex');
 
     const address = companyAddress;
     const amount = web3.utils.toHex(web3.utils.toWei('0.000002', 'ether'));
@@ -756,7 +756,7 @@ async function sendEth1(){
             to: contractAddress,
             value: web3.utils.toHex(web3.utils.toWei('0', 'ether')),
             gasLimit: web3.utils.toHex(2100000),
-            gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
+            gasPrice: web3.utils.toHex(web3.utils.toWei('60', 'gwei')),
             data: query
         }
         // Sign the transaction
