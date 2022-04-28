@@ -560,15 +560,15 @@ async function test(){
     var myContract = new web3.eth.Contract(contractAbi, contractAddress);
 
     var isPresent = false;
-    isPresent = await myContract.methods.checkIfAccountPresent(companyAddress).call({
+    isPresent = await myContract.methods.checkIfAccountPresent(user).call({
         from: companyAddress,
     });
     console.log(isPresent);
     alert("Account present: "+isPresent)
-
     if (!isPresent) {
-        const privateKey1 = new ethereumjs.Buffer.Buffer('privateKey', 'hex');
-        const query = await myContract.methods.createAccount(companyAddress).encodeABI();
+        alert('Creating account. Please wait. This may take a while.')
+        const privateKey1 = new ethereumjs.Buffer.Buffer('privatkey', 'hex');
+        const query = await myContract.methods.createAccount(user).encodeABI();
 
         web3.eth.getTransactionCount(companyAddress, (err, txCount) => {
             // Build the transaction
@@ -577,7 +577,7 @@ async function test(){
                 to: contractAddress,
                 value: web3.utils.toHex(web3.utils.toWei('0', 'ether')),
                 gasLimit: web3.utils.toHex(2100000),
-                gasPrice: web3.utils.toHex(web3.utils.toWei('6', 'gwei')),
+                gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
                 data: query
             }
             // Sign the transaction
@@ -589,7 +589,7 @@ async function test(){
             // Broadcast the transaction
             const transaction = web3.eth.sendSignedTransaction(raw).then(tx => {
                 console.log('Tx:', tx);
-                alert('Transaction complete!')
+                alert('Transaction complete! Account created.')
             })
             .catch(e => {
                 console.error('Error broadcasting the transaction: ', e);
@@ -598,16 +598,16 @@ async function test(){
         })
     }
     else {
-        var payDone = false;
-        var planExp = true;
-        payDone = await myContract.methods.checkIfPaymentDone(companyAddress).call({
+        var payDone = await myContract.methods.checkIfPaymentDone(user).call({
             from: companyAddress,
         });
+        //payDone = false; // Demo
         console.log(payDone);
         alert("Payment Done: "+payDone);
-        planExp = await myContract.methods.checkIfPlanExpired(companyAddress).call({
+        var planExp = await myContract.methods.checkIfPlanExpired(user).call({
             from: companyAddress,
         });
+        //planExp = true; // Demo
         console.log(planExp);
         alert("Plan Expired: "+planExp);
         if (!payDone || planExp) {
@@ -667,20 +667,35 @@ async function sendEth1(){
     const dt = Math.floor(new Date().getTime()/1000)+2592000;
     console.log(dt)
 
-    const privateKey = new ethereumjs.Buffer.Buffer('privateKey', 'hex');
+    await ethereum.request({
+        method: "eth_sendTransaction",
+        params: [
+          {
+            from: user,
+            to: companyAddress,
+            value: "0x" + (0.1 * 10 ** 18).toString(16),
+            gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
+            gas: "0x2710",
+          },
+        ],
+      })
+      .then((txHash) => console.log(txHash))
+      .catch((error) => console.error);
+
+    const privateKey = new ethereumjs.Buffer.Buffer('privatkey', 'hex');
 
     const address = companyAddress;
-    const amount = web3.utils.toHex(web3.utils.toWei('0.000001', 'ether'));
+    const amount = 1;
     const expiresAt = dt;
-    const query = await myContract.methods.selectPlan(address, amount, expiresAt).encodeABI();
+    const query = await myContract.methods.selectPlan(user, amount, expiresAt).encodeABI();
     web3.eth.getTransactionCount(companyAddress, (err, txCount) => {
         // Build the transaction
         const txObject = {
             nonce: web3.utils.toHex(txCount),
             to: contractAddress,
-            value: web3.utils.toHex(web3.utils.toWei('0.000001', 'ether')),
+            value: web3.utils.toHex(web3.utils.toWei('0', 'ether')),
             gasLimit: web3.utils.toHex(2100000),
-            gasPrice: web3.utils.toHex(web3.utils.toWei('6', 'gwei')),
+            gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
             data: query
         }
         // Sign the transaction
@@ -713,20 +728,35 @@ async function sendEth1(){
     const dt = Math.floor(new Date().getTime()/1000)+2*2592000;
     console.log(dt)
 
-    const privateKey = new ethereumjs.Buffer.Buffer('privateKey', 'hex');
+    await ethereum.request({
+      method: "eth_sendTransaction",
+      params: [
+        {
+          from: user,
+          to: companyAddress,
+          value: "0x" + (0.2 * 10 ** 18).toString(16),
+          gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
+          gas: "0x2710",
+        },
+      ],
+    })
+    .then((txHash) => console.log(txHash))
+    .catch((error) => console.error);
+
+    const privateKey = new ethereumjs.Buffer.Buffer('privatkey', 'hex');
 
     const address = companyAddress;
     const amount = web3.utils.toHex(web3.utils.toWei('0.000002', 'ether'));
     const expiresAt = dt;
-    const query = await myContract.methods.selectPlan(address, amount, expiresAt).encodeABI();
+    const query = await myContract.methods.selectPlan(user, amount, expiresAt).encodeABI();
     web3.eth.getTransactionCount(companyAddress, (err, txCount) => {
         // Build the transaction
         const txObject = {
             nonce: web3.utils.toHex(txCount),
             to: contractAddress,
-            value: web3.utils.toHex(web3.utils.toWei('0.000002', 'ether')),
+            value: web3.utils.toHex(web3.utils.toWei('0', 'ether')),
             gasLimit: web3.utils.toHex(2100000),
-            gasPrice: web3.utils.toHex(web3.utils.toWei('6', 'gwei')),
+            gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
             data: query
         }
         // Sign the transaction
